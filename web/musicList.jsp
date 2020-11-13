@@ -70,15 +70,21 @@
         <td align="center">
             <audio src="<%=music.getPlayUrl()%>" controls="controls" style="width: 280px"></audio>
         </td>
-<%--        <%--%>
-<%--            if (music.getMovieUrl() != null) {--%>
-<%--        %>--%>
-        <td align="center" controls="controls">
+        <%
+            if (music.getMovieUrl() != null) {
+        %>
+        <td align="center">
             <video src="<%=music.getMovieUrl()%>" controls="" width="250px" height="200px">您的浏览器不支持 video 标签。</video>
         </td>
-<%--        <%--%>
-<%--            }--%>
-<%--        %>--%>
+        <%
+        } else {
+        %>
+        <td align="center">
+            <p>该歌曲暂时没有mv</p>
+        </td>
+        <%
+            }
+        %>
     </tr>
     <%
             }

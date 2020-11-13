@@ -7,6 +7,12 @@ import org.jsoup.Connection;
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -143,10 +149,11 @@ public class Utils {
     }
 
     /**
-     *  根据歌曲的 rid 返回该歌曲对应的 mv链接
+     * 根据歌曲的 rid 返回该歌曲对应的 mv链接
+     *
      * @param rid 歌曲对应的 rid
-     * @return  该歌曲对应的 mv;
-     *          如果歌曲没有 mv, 返回 null
+     * @return 该歌曲对应的 mv;
+     * 如果歌曲没有 mv, 返回 null
      */
     public static String get_movieUrl_by_rid(String rid) {
         BufferedReader bufferedReader = null;
@@ -158,13 +165,13 @@ public class Utils {
             con = (HttpURLConnection) url.openConnection();
             bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
             result = bufferedReader.readLine();
-            if("res not found".equals(result)) {
+            if ("res not found".equals(result)) {
                 result = null;
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (bufferedReader!=null) {
+            if (bufferedReader != null) {
                 try {
                     bufferedReader.close();
                 } catch (Exception e) {
@@ -175,9 +182,34 @@ public class Utils {
         return result;
     }
 
+    /**
+     * 尝试获取歌词
+     *
+     * @param rid 歌曲的 rid
+     * @return 歌词
+     */
+    public static String getLyric(String rid) {
+        System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
+        WebDriver webDriver = new ChromeDriver();
+        webDriver.get("http://kuwo.cn/play_detail/" + rid);
+
+//        WebDriverWait webDriverWait = new WebDriverWait(webDriver, 10);
+//        webDriverWait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#__layout > div > div.container > div > div.content > div.info_r > div:nth-child(2) > div.down > span")));
+
+//        WebElement element_zhan = webDriver.findElement(By.cssSelector("#__layout > div > div.container > div > div.content > div.info_r > div:nth-child(2) > div.down > span"));
+//        element_zhan.click();
+
+        WebElement element = webDriver.findElement(By.cssSelector("#lyric > div"));
+        System.out.println(element.getText());
+        return element.getText();
+//        return "";
+
+    }
+
     public static void main(String[] args) {
 //        System.out.println(musicList("周杰伦", 1));
 //        System.out.println("token:" + getToken());
-        System.out.println("get_mp4Url_by_rid:" + get_movieUrl_by_rid("140064959"));
+//        System.out.println("get_mp4Url_by_rid:" + get_movieUrl_by_rid("140064959"));
+        System.out.println("getLyric:" + getLyric("140064959"));
     }
 }
