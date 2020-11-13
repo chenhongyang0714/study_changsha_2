@@ -5,19 +5,22 @@ public class Music {
     private String albumpic;  //专辑图片
     private String name; // 歌曲名
     private String artist;//歌手名
-    private String duration;//歌曲的时长
+    private String songTimeMinutes;//歌曲的时长
     private String playUrl; // 歌曲加载链接
+    private String movieUrl; // mv 链接
 
-    public Music() {
+    public Music(){
+
     }
 
-    public Music(String album, String albumpic, String name, String artist, String duration, String playUrl) {
+    public Music(String album, String albumpic, String name, String artist, String songTimeMinutes, String playUrl, String movieUrl) {
         this.album = album;
         this.albumpic = albumpic;
         this.name = name;
         this.artist = artist;
-        this.duration = duration;
+        this.songTimeMinutes = songTimeMinutes;
         this.playUrl = playUrl;
+        this.movieUrl = movieUrl;
     }
 
     public String getAlbum() {
@@ -52,12 +55,12 @@ public class Music {
         this.artist = artist;
     }
 
-    public String getDuration() {
-        return duration;
+    public String getSongTimeMinutes() {
+        return songTimeMinutes;
     }
 
-    public void setDuration(String duration) {
-        this.duration = duration;
+    public void setSongTimeMinutes(String songTimeMinutes) {
+        this.songTimeMinutes = songTimeMinutes;
     }
 
     public String getPlayUrl() {
@@ -68,6 +71,14 @@ public class Music {
         this.playUrl = playUrl;
     }
 
+    public String getMovieUrl() {
+        return movieUrl;
+    }
+
+    public void setMovieUrl(String movieUrl) {
+        this.movieUrl = movieUrl;
+    }
+
     @Override
     public String toString() {
         return "Music{" +
@@ -75,8 +86,9 @@ public class Music {
                 ", albumpic='" + albumpic + '\'' +
                 ", name='" + name + '\'' +
                 ", artist='" + artist + '\'' +
-                ", duration='" + duration + '\'' +
+                ", songTimeMinutes='" + songTimeMinutes + '\'' +
                 ", playUrl='" + playUrl + '\'' +
+                ", movieUrl='" + movieUrl + '\'' +
                 '}';
     }
 }

@@ -45,30 +45,40 @@
 %>
 <table align="center" class="hovertable">
     <tr>
+        <th>专辑图片</th>
         <th>歌曲名</th>
         <th>专辑名</th>
         <th>歌手名</th>
         <th>歌曲时长</th>
-        <th>专辑图片</th>
         <th>播放区域</th>
+        <th>MV专区</th>
     </tr>
     <% if (list != null) {
         for (Music music : list) {
     %>
     <tr align="center" onmouseover="this.style.backgroundColor='#d4d3e5';"
         onmouseout="this.style.backgroundColor='#d4e3e5';">
+        <td align="center"><img src="<%=music.getAlbumpic()%>" width="100px" height="100px"/></td>
         <td align="center"><%=music.getName()%>
         </td>
         <td align="center"><%=music.getAlbum()%>
         </td>
         <td align="center"><%=music.getArtist()%>
         </td>
-        <td align="center"><%=music.getDuration()%>
+        <td align="center"><%=music.getSongTimeMinutes()%>
         </td>
-        <td align="center"><img src="<%=music.getAlbumpic()%>" width="100px" height="100px"/></td>
         <td align="center">
             <audio src="<%=music.getPlayUrl()%>" controls="controls" style="width: 280px"></audio>
         </td>
+<%--        <%--%>
+<%--            if (music.getMovieUrl() != null) {--%>
+<%--        %>--%>
+        <td align="center" controls="controls">
+            <video src="<%=music.getMovieUrl()%>" controls="" width="250px" height="200px">您的浏览器不支持 video 标签。</video>
+        </td>
+<%--        <%--%>
+<%--            }--%>
+<%--        %>--%>
     </tr>
     <%
             }
@@ -76,7 +86,7 @@
     %>
 
     <tr>
-        <td colspan="6" align="center">
+        <td colspan="7" align="center">
             <%
                 int pageNum = Integer.parseInt(request.getAttribute("page").toString());
                 if (pageNum > 1) {

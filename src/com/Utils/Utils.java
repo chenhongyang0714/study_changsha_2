@@ -9,6 +9,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -83,7 +84,7 @@ public class Utils {
         }
 
         assert response != null;
-//        System.out.println("response.body():" + response.body());
+        System.out.println("response.body():" + response.body());
 //        System.out.println("result:" + result);
         return response.body();
 //        return result;
@@ -101,14 +102,15 @@ public class Utils {
         JSONObject data = jsonObject.getJSONObject("data");
         JSONArray listJson = data.getJSONArray("list");
         List<Music> list = new ArrayList<Music>();
-        System.out.println("parseJson  start ");
+        System.out.println("parseJson start!");
         for (Object j : listJson) {
             JSONObject musicJson = (JSONObject) j;
 
             Music music = new Music(musicJson.getString("album"),
                     musicJson.getString("albumpic"), musicJson.getString("name"),
-                    musicJson.getString("artist"), musicJson.getString("duration"),
-                    Utils.get_url_by_rid(musicJson.getString("rid")));
+                    musicJson.getString("artist"), musicJson.getString("songTimeMinutes"),
+                    Utils.get_songUrl_by_rid(musicJson.getString("rid")),
+                    Utils.get_movieUrl_by_rid(musicJson.getString("rid")));
 
             System.out.println(music.toString());
             list.add(music);
@@ -122,7 +124,7 @@ public class Utils {
      * @param rid 歌曲对应的 rid
      * @return 歌曲下载链接
      */
-    public static String get_url_by_rid(String rid) {
+    public static String get_songUrl_by_rid(String rid) {
         String urlString = "http://kuwo.cn/url?format=mp3&rid=" + rid + "&response=url&type=convert_url3&br=320kmp3&from=web&t=1604991207945&httpsStatus=1&reqId=6fad66a1-2321-11eb-beba-c93a68b45841";
         BufferedReader bufferedReader = null;
         String result = null;
@@ -140,9 +142,42 @@ public class Utils {
         return result;
     }
 
+    /**
+     *  根据歌曲的 rid 返回该歌曲对应的 mv链接
+     * @param rid 歌曲对应的 rid
+     * @return  该歌曲对应的 mv;
+     *          如果歌曲没有 mv, 返回 null
+     */
+    public static String get_movieUrl_by_rid(String rid) {
+        BufferedReader bufferedReader = null;
+        HttpURLConnection con = null;
+
+        String result = "http://kuwo.cn/url?rid=" + rid + "&response=url&format=mp4%7Cmkv&type=convert_url&t=1605279677348&httpsStatus=1&reqId=14d6f640-25c1-11eb-ac1b-9b763f265d78";
+        try {
+            URL url = new URL(result);
+            con = (HttpURLConnection) url.openConnection();
+            bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
+            result = bufferedReader.readLine();
+            if("res not found".equals(result)) {
+                result = null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (bufferedReader!=null) {
+                try {
+                    bufferedReader.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return result;
+    }
 
     public static void main(String[] args) {
 //        System.out.println(musicList("周杰伦", 1));
-        System.out.println("token:" + getToken());
+//        System.out.println("token:" + getToken());
+        System.out.println("get_mp4Url_by_rid:" + get_movieUrl_by_rid("140064959"));
     }
 }
