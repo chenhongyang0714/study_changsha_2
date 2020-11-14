@@ -1,10 +1,8 @@
 package com.servlet;
 
 import java.util.List;
-
 import com.Utils.Utils;
 import com.study.vo.Music;
-
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -18,15 +16,15 @@ public class MyServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String searchName = req.getParameter("searchName");
         String page = req.getParameter("page");
-        System.out.println("page:" + page);
+
         if (page == null) {
             page = "1";
         }
-        System.out.println(searchName);
-//        System.out.println(page);
+
+        System.out.println("searchName:" +searchName);
+        System.out.println("page:" + page);
 
         String musicListJson = Utils.musicList(searchName, page);
-//        System.out.println("----------------------");
 //        System.out.println("musicListJson:" + musicListJson);
 
         List<Music> musicList = Utils.parseJson(musicListJson);

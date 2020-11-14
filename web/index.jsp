@@ -11,7 +11,7 @@
             position: absolute;
             top: 0;
             bottom: 0;
-            left: 300px;
+            left: 260px;
             right: 0;
             width: 50%;
             height: 30%;
@@ -52,12 +52,37 @@
             color: white; /*搜索的字体颜色为白色*/
             cursor: pointer; /*鼠标变为小手*/
         }
+
+        .title {
+            width: 300px;
+            height: 200px;
+            position: absolute;
+            left: 50%;
+            top: 100px;
+            margin-left: -150px;
+            background-image: -webkit-linear-gradient(left, blue, #66ffff 10%, #cc00ff 20%, #CC00CC 30%, #CCCCFF 40%, #00FFFF 50%, #CCCCFF 60%, #CC00CC 70%, #CC00FF 80%, #66FFFF 90%, blue 100%);
+            -webkit-text-fill-color: transparent; /* 将字体设置成透明色 */
+            -webkit-background-clip: text; /* 裁剪背景图，使文字作为裁剪区域向外裁剪 */
+            -webkit-background-size: 200% 100%;
+            -webkit-animation: masked-animation 4s linear infinite;
+            font-size: 35px;
+        }
+
+        @keyframes masked-animation {
+            0% {
+                background-position: 0 0;
+            }
+            100% {
+                background-position: -100% 0;
+            }
+        }
     </style>
 </head>
 <body>
+<p class="title">听音乐 好心情</p>
 <div class="center-text">
     <form class="search_form" action="musicList" method="get">
-        <input type="text" class="input_text" placeholder="请输入搜索内容" name="searchName">
+        <input type="text" class="input_text" placeholder="搜索音乐/MV/歌单/歌手" name="searchName">
         <input type="submit" value="搜索一下" class="input_sub">
     </form>
 </div>

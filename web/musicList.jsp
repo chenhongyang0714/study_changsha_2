@@ -68,13 +68,13 @@
         <td align="center"><%=music.getSongTimeMinutes()%>
         </td>
         <td align="center">
-            <audio src="<%=music.getPlayUrl()%>" controls="controls" style="width: 280px"></audio>
+            <a href="<%=music.getPlayUrl()%>" target="_Blank">播放跳转</a>
         </td>
         <%
             if (music.getMovieUrl() != null) {
         %>
         <td align="center">
-            <video src="<%=music.getMovieUrl()%>" controls="" width="250px" height="200px">您的浏览器不支持 video 标签。</video>
+            <a href="<%=music.getMovieUrl()%>" target="_Blank">MV跳转</a>
         </td>
         <%
         } else {
@@ -107,6 +107,8 @@
             %>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <a href="musicList?page=<%=pageNum+1%>&searchName=<%=request.getAttribute("searchName") %>">下一页</a>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="findMusic.jsp" target="_Blank">每日推荐</a>
         </td>
     </tr>
 

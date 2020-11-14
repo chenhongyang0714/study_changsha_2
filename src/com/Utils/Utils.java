@@ -11,11 +11,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -88,7 +85,6 @@ public class Utils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         assert response != null;
         System.out.println("response.body():" + response.body());
 //        System.out.println("result:" + result);
