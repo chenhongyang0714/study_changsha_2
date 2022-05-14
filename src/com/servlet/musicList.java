@@ -36,7 +36,7 @@ public class musicList extends HttpServlet {
             System.out.println("page:" + page);
 
             String musicListJson = Utils.musicList(searchName, page);
-//        System.out.println("musicListJson:" + musicListJson);
+            System.out.println("musicListJson:" + musicListJson);
 
             List<Music> musicList = Utils.parseJson(musicListJson);
 

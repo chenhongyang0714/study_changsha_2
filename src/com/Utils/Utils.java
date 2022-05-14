@@ -33,7 +33,8 @@ public class Utils {
             URL url = new URL("http://www.kuwo.cn");
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             String setCookies = httpURLConnection.getHeaderField("Set-Cookie");
-            System.out.println("setCookies:" + setCookies);
+//            System.out.println("setCookies:" + setCookies);
+
             String[] splits = setCookies.split(";");
             for (int i = 0; i < splits.length; i++) {
                 if (splits[i].contains("kw_token")) {
@@ -58,8 +59,8 @@ public class Utils {
         String urlString = "https://kuwo.cn/api/www/search/searchMusicBykeyWord?" +
                 "key=" + searchName + "&pn=" + page + "&rn=" + rn + "&httpsStatus=1&" +
                 "reqId=f94cbc40-2488-11eb-bdad-1b8a24fee8b5";
+        System.out.println("urlString:" + urlString);
 
-//        System.out.println("urlString:" + urlString);
         Response response = null;
         String result = null;
         try {
@@ -71,7 +72,7 @@ public class Utils {
                     .header("csrf", token)
                     .header("Referer", "http://www.kuwo.cn/search/list?key=%E5%91%A8%E6%9D%B0%E4%BC%A6")
                     .method(Connection.Method.GET)
-                    .ignoreContentType(true)
+                    .ignoreContentType(true)  // 忽略contentType的检查
                     .execute();
 
 //            URL url = new URL(urlString);
@@ -101,6 +102,7 @@ public class Utils {
     public static List<Music> parseJson(String musicListJson) {
         //        对 JSON 数据进行解析
         JSONObject jsonObject = JSONObject.parseObject(musicListJson);
+        System.out.println("jsonObject:" + jsonObject);
         JSONObject data = jsonObject.getJSONObject("data");
         JSONArray listJson = data.getJSONArray("list");
         List<Music> list = new ArrayList<Music>();
@@ -108,11 +110,15 @@ public class Utils {
         for (Object j : listJson) {
             JSONObject musicJson = (JSONObject) j;
 
-            Music music = new Music(musicJson.getString("album"),
-                    musicJson.getString("albumpic"), musicJson.getString("name"),
-                    musicJson.getString("artist"), musicJson.getString("songTimeMinutes"),
-                    Utils.get_songUrl_by_rid(musicJson.getString("rid")),
-                    Utils.get_movieUrl_by_rid(musicJson.getString("rid")));
+            Music music = new Music(
+                    musicJson.getString("album"),
+                    musicJson.getString("albumpic"),
+                    musicJson.getString("name"),
+                    musicJson.getString("artist"),
+                    musicJson.getString("songTimeMinutes"),
+                    Utils.get_songUrl_by_mid(musicJson.getString("rid")),
+                    Utils.get_movieUrl_by_mid(musicJson.getString("rid"))
+            );
 
             System.out.println(music.toString());
             list.add(music);
@@ -120,60 +126,134 @@ public class Utils {
         return list;
     }
 
+
+///**
+// * 该代码已被 get_songUrl_by_mid 迭代
+// */
+//    /**
+//     * 根据 rid 获取歌曲下载链接
+//     *
+//     * @param rid 歌曲对应的 rid
+//     * @return 歌曲下载链接
+//     */
+//    public static String get_songUrl_by_rid(String rid) {
+//        br: 音质
+//        String urlString = "http://kuwo.cn/url?format=mp3&rid=" + rid + "&response=url&type=convert_url3&br=320kmp3&from=web&t=1604991207945&httpsStatus=1&reqId=6fad66a1-2321-11eb-beba-c93a68b45841";
+//        BufferedReader bufferedReader = null;
+//        String result = null;
+//        try {
+//            URL url = new URL(urlString);
+//            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+//            bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
+//            result = bufferedReader.readLine();
+//            JSONObject jsonObject = JSONObject.parseObject(result);
+//            result = jsonObject.getString("url");
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return result;
+//    }
+
     /**
-     * 根据 rid 获取歌曲下载链接
+     * 根据 mid 获取歌曲下载链接
      *
-     * @param rid 歌曲对应的 rid
+     * @param mid 歌曲对应的 mid
      * @return 歌曲下载链接
      */
-    public static String get_songUrl_by_rid(String rid) {
-        String urlString = "http://kuwo.cn/url?format=mp3&rid=" + rid + "&response=url&type=convert_url3&br=320kmp3&from=web&t=1604991207945&httpsStatus=1&reqId=6fad66a1-2321-11eb-beba-c93a68b45841";
-        BufferedReader bufferedReader = null;
+    public static String get_songUrl_by_mid(String mid) {
+        String urlStringNew = "http://www.kuwo.cn/api/v1/www/music/playUrl?mid=" + mid + "&type=music&httpsStatus=1&reqId=b929ec91-6952-11ec-a1bb-c30d3d13ddf4";
+
+        Response response;
         String result = null;
         try {
-            URL url = new URL(urlString);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
-            result = bufferedReader.readLine();
-            JSONObject jsonObject = JSONObject.parseObject(result);
-            result = jsonObject.getString("url");
+            String token = Utils.getToken();  // 获取 token
+
+            // 处理 免费歌曲的请求
+            response = Jsoup.connect(urlStringNew)
+                    .cookie("kw_token", token)
+                    .header("Referer", "http://www.kuwo.cn/search/list?key=%E5%91%A8%E6%9D%B0%E4%BC%A6")
+                    .method(Connection.Method.GET)
+                    .ignoreContentType(true)  // 忽略contentType的检查
+                    .execute();
+//            System.out.println("response.body():" + response);
+            JSONObject jsonObject = JSONObject.parseObject(response.body());
+            result = jsonObject.getJSONObject("data").getString("url");
+
 
         } catch (Exception e) {
-            e.printStackTrace();
+            // 处理 收费歌曲的请求
+            result = "vipvipvip";
+
         }
         return result;
     }
 
-    /**
+///**
+// * 该代码已被 get_movieUrl_by_mid 迭代
+// */
+//    /**
+//     * 根据歌曲的 rid 返回该歌曲对应的 mv链接
+//     *
+//     * @param rid 歌曲对应的 rid
+//     * @return 该歌曲对应的 mv;
+//     * 如果歌曲没有 mv, 返回 null
+//     */
+//    public static String get_movieUrl_by_rid(String rid) {
+//        BufferedReader bufferedReader = null;
+//        HttpURLConnection con = null;
+//
+//        String result = "http://kuwo.cn/url?rid=" + rid + "&response=url&format=mp4%7Cmkv&type=convert_url&t=1605279677348&httpsStatus=1&reqId=14d6f640-25c1-11eb-ac1b-9b763f265d78";
+//        try {
+//            URL url = new URL(result);
+//            con = (HttpURLConnection) url.openConnection();
+//            bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
+//            result = bufferedReader.readLine();
+//            if ("res not found".equals(result)) {
+//                result = null;
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+//            if (bufferedReader != null) {
+//                try {
+//                    bufferedReader.close();
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//        return result;
+//    }
+
+     /**
      * 根据歌曲的 rid 返回该歌曲对应的 mv链接
      *
-     * @param rid 歌曲对应的 rid
+     * @param mid 歌曲对应的 rid
      * @return 该歌曲对应的 mv;
      * 如果歌曲没有 mv, 返回 null
      */
-    public static String get_movieUrl_by_rid(String rid) {
-        BufferedReader bufferedReader = null;
-        HttpURLConnection con = null;
+    public static String get_movieUrl_by_mid(String mid) {
+        String urlStringNew = "http://www.kuwo.cn/api/v1/www/music/playUrl?mid=" + mid + "&type=mv&httpsStatus=1&reqId=f37c4520-695f-11ec-8fb1-d12df65d051f";
 
-        String result = "http://kuwo.cn/url?rid=" + rid + "&response=url&format=mp4%7Cmkv&type=convert_url&t=1605279677348&httpsStatus=1&reqId=14d6f640-25c1-11eb-ac1b-9b763f265d78";
+        Response response;
+        String result = null;
         try {
-            URL url = new URL(result);
-            con = (HttpURLConnection) url.openConnection();
-            bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
-            result = bufferedReader.readLine();
-            if ("res not found".equals(result)) {
-                result = null;
-            }
+            String token = Utils.getToken();  // 获取 token
+            // 处理 免费歌曲的请求
+            response = Jsoup.connect(urlStringNew)
+                    .cookie("kw_token", token)
+                    .header("Referer", "http://www.kuwo.cn/search/list?key=%E5%91%A8%E6%9D%B0%E4%BC%A6")
+                    .method(Connection.Method.GET)
+                    .ignoreContentType(true)  // 忽略contentType的检查
+                    .execute();
+            System.out.println("response.body():" + response.body());
+            JSONObject jsonObject = JSONObject.parseObject(response.body());
+            result = jsonObject.getJSONObject("data").getString("url");
         } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (bufferedReader != null) {
-                try {
-                    bufferedReader.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+            // 处理 收费mv的请求
+            result = "vipvipvip  mv";
+
         }
         return result;
     }
@@ -203,9 +283,26 @@ public class Utils {
     }
 
     public static void main(String[] args) {
-//        System.out.println(musicList("周杰伦", 1));
 //        System.out.println("token:" + getToken());
-//        System.out.println("get_mp4Url_by_rid:" + get_movieUrl_by_rid("140064959"));
-        System.out.println("getLyric:" + getLyric("140064959"));
+
+//        System.out.println(musicList("周杰伦", "1"));
+//        System.out.println(parseJson(musicList("周杰伦", "1")));
+
+        // vip歌曲: 228908
+        // 免费歌曲: 140064959 (成功获取)
+//        System.out.println("get_mp4Url_by_mid:" + get_songUrl_by_mid("228908"));
+        System.out.println("get_mp4Url_by_mid:" + get_songUrl_by_mid("204826369"));
+
+        // vip mv: 228908
+        // 免费mv: 180214493 (成功获取)
+//        System.out.println(get_movieUrl_by_mid("228908"));
+//        System.out.println(get_movieUrl_by_mid("180214493"));
+
+//        System.out.println("getLyric:" + getLyric("140064959"));
+
+
+        // 已被迭代
+//        System.out.println("get_mp4Url_by_rid:" + get_songUrl_by_rid("83728113"));
+//        System.out.println("get_movieUrl_by_rid:" + get_movieUrl_by_rid("140064959"));
     }
 }

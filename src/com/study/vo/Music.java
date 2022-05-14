@@ -9,7 +9,7 @@ public class Music {
     private String playUrl; // 歌曲加载链接
     private String movieUrl; // mv 链接
 
-    public Music(){
+    public Music() {
 
     }
 

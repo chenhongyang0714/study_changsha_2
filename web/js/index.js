@@ -22,7 +22,7 @@ function searchKey() {
                 txt = '<li style=" list-style: none; width: 200px; text-align:left;">' + data[i] + '</li>';
                 $('#ul').append(txt); // 将txt添加到ul中
                 //点击查询结果写入input
-                $('#ul li').eq(i).click(function(){
+                $('#ul li').eq(i).click(function () {
                     $('#input_text').val($(this).text());//写入input
                     $('li').remove();//添加完成关闭 li
                     $('h3').remove();//添加完成关闭 li
@@ -60,7 +60,7 @@ function suggest() {
                     txt = '<li style=" list-style: none; width: 200px; text-align:left;">' + data[i] + '</li>';
                     $('#ul').append(txt); // 将txt添加到ul中
                     //点击查询结果写入input
-                    $('#ul li').eq(i).click(function(){
+                    $('#ul li').eq(i).click(function () {
                         $('#input_text').val($(this).text());//写入input
                         $('li').remove();//添加完成关闭 li
                         $('h3').remove();//添加完成关闭 li
